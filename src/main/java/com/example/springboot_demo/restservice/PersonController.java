@@ -1,49 +1,38 @@
 package com.example.springboot_demo.restservice;
 
 import com.example.springboot_demo.Person;
+import com.example.springboot_demo.repository.PersonRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/person")
 public class PersonController {
 
-    private Map<String, Person> personMap = new HashMap<>();
+    private final PersonRepository personRepository;
 
-    @PostMapping("/create")
-    public ResponseEntity<String> createPerson(@RequestBody Person person) {
-        if (personMap.containsKey(person.getName())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Person with Name " + person.getName() + " Already Exists");
-        }
-        personMap.put(person.getName(), person);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                "Person Created Successfully, with name " + person.getName() +
-                (person.getAge() != null ? " and age " + person.getAge() : "")
-        );
+    public PersonController(PersonRepository personRepository) {
+        this.personRepository = personRepository;
     }
 
-    @GetMapping("/get/{name}")
-    public ResponseEntity<String> getPersonByName(@PathVariable String name) {
-        if (personMap.containsKey(name)) {
-            Person person = personMap.get(name);
-            return ResponseEntity.ok(person.toString());
+    @PostMapping
+    public ResponseEntity<Person> createPerson(@RequestBody Person person) {
+        String firstName = person.getFirstName();
+        if (personRepository.findByFirstName(firstName) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        personRepository.save(person);
+        return ResponseEntity.status(HttpStatus.OK).body(person);
+    }
+
+    @GetMapping
+    public ResponseEntity<Person> getPersonByFirstName(@RequestParam String firstName) {
+        Person person = personRepository.findByFirstName(firstName);
+        if (person == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } else {
-            return new ResponseEntity<>("Person with Name " + name + " Not Found", HttpStatus.NOT_FOUND);
+            return ResponseEntity.ok(person);
         }
-    }
-
-    @GetMapping("/getall")
-    public ResponseEntity<List<String>> getAllPerson() {
-        List<String> allPerson = new ArrayList<>();
-        for (Person p : personMap.values()) {
-            allPerson.add(p.toString());
-        }
-        return ResponseEntity.ok(allPerson);
     }
 }

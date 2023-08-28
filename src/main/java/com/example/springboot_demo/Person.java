@@ -1,23 +1,38 @@
 package com.example.springboot_demo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "persons")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Person {
-    public String name;
 
-    public Integer age;
+    @Id
+    private String id;
 
-    public Person(String name, Integer age) {
-        this.name = name;
-        this.age = age;
+    private String firstName;
+
+    private String lastName;
+
+    private Integer age;
+
+    public Person() {};
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public Person() {}
-
-    public void setName(String name) {
-        this.name = name;
+    public String getFirstName() {
+        return this.firstName;
     }
 
-    public String getName() {
-        return name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public void setAge(Integer age) {
@@ -30,7 +45,7 @@ public class Person {
 
     @Override
     public String toString() {
-        String nameString = "The person is named " + getName();
+        String nameString = "The person is named " + getFirstName() + " " + getLastName();
         String ageString = age != null ? " and the age is " + getAge() : "";
 
         return nameString + ageString;
