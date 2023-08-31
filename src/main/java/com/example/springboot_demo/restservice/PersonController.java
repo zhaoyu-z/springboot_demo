@@ -1,6 +1,6 @@
 package com.example.springboot_demo.restservice;
 
-import com.example.springboot_demo.Person;
+import com.example.springboot_demo.model.Person;
 import com.example.springboot_demo.repository.PersonRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

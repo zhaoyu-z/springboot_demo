@@ -1,4 +1,4 @@
-package com.example.springboot_demo;
+package com.example.springboot_demo.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.data.annotation.Id;
